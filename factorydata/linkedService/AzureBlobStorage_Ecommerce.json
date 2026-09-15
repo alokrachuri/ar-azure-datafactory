@@ -1,0 +1,11 @@
+{
+	"name": "AzureBlobStorage_Ecommerce",
+	"properties": {
+		"annotations": [],
+		"type": "AzureBlobStorage",
+		"typeProperties": {
+			"serviceEndpoint": "https://arstorage123.blob.core.windows.net/",
+			"accountKind": "StorageV2"
+		}
+	}
+}
