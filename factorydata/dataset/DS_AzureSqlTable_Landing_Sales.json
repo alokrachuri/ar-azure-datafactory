@@ -1,0 +1,55 @@
+{
+	"name": "DS_AzureSqlTable_Landing_Sales",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "AzureSqlDatabase",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [
+			{
+				"name": "order_id",
+				"type": "nvarchar"
+			},
+			{
+				"name": "order_date",
+				"type": "date"
+			},
+			{
+				"name": "customer_id",
+				"type": "nvarchar"
+			},
+			{
+				"name": "product_id",
+				"type": "money",
+				"precision": 19,
+				"scale": 4
+			},
+			{
+				"name": "quantity",
+				"type": "tinyint",
+				"precision": 3
+			},
+			{
+				"name": "unit_price",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "discount",
+				"type": "smallint",
+				"precision": 5
+			},
+			{
+				"name": "last_modified_time",
+				"type": "datetime2",
+				"scale": 7
+			}
+		],
+		"typeProperties": {
+			"schema": "Ecommerce",
+			"table": "Landing_Sales"
+		}
+	}
+}
