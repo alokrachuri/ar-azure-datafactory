@@ -1,0 +1,57 @@
+{
+	"name": "DelimitedText1",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "AzureBlobStorage_Ecommerce",
+			"type": "LinkedServiceReference"
+		},
+		"parameters": {
+			"folder": {
+				"type": "string"
+			}
+		},
+		"annotations": [],
+		"type": "DelimitedText",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobStorageLocation",
+				"fileName": {
+					"value": "@dataset().folder",
+					"type": "Expression"
+				},
+				"folderPath": "Landing",
+				"container": "docs"
+			},
+			"columnDelimiter": ",",
+			"escapeChar": "\\",
+			"firstRowAsHeader": true,
+			"quoteChar": "\""
+		},
+		"schema": [
+			{
+				"name": "customer_id",
+				"type": "String"
+			},
+			{
+				"name": "customer_name",
+				"type": "String"
+			},
+			{
+				"name": "email",
+				"type": "String"
+			},
+			{
+				"name": "city",
+				"type": "String"
+			},
+			{
+				"name": "state",
+				"type": "String"
+			},
+			{
+				"name": "registration_date",
+				"type": "String"
+			}
+		]
+	}
+}
