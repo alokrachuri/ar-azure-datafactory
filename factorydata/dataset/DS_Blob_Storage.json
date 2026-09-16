@@ -15,11 +15,10 @@
 		"typeProperties": {
 			"location": {
 				"type": "AzureBlobStorageLocation",
-				"fileName": {
-					"value": "@dataset().folder",
+				"folderPath": {
+					"value": "@concat('Landing/',dataset().folder)",
 					"type": "Expression"
 				},
-				"folderPath": "Landing",
 				"container": "docs"
 			},
 			"columnDelimiter": ",",
