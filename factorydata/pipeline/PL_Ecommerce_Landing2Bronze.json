@@ -242,10 +242,7 @@
 														}
 													],
 													"type": "Query",
-													"text": {
-														"value": "UPDATE Ecommerce.Bronze_Control_File\nSET last_modified_time = @pipeline_runtime\nWHERE source_folder = 'Sales';",
-														"type": "Expression"
-													}
+													"text": "UPDATE Ecommerce.Bronze_Control_File\nSET last_modified_time = @pipeline_runtime\nWHERE source_folder = 'Sales';"
 												}
 											],
 											"scriptBlockExecutionTimeout": "02:00:00"
