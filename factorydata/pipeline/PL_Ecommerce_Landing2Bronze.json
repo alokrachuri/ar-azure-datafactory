@@ -141,6 +141,58 @@
 												}
 											}
 										]
+									},
+									{
+										"name": "Script2",
+										"type": "Script",
+										"dependsOn": [
+											{
+												"activity": "Copy data2",
+												"dependencyConditions": [
+													"Succeeded"
+												]
+											}
+										],
+										"policy": {
+											"timeout": "0.12:00:00",
+											"retry": 0,
+											"retryIntervalInSeconds": 30,
+											"secureOutput": false,
+											"secureInput": false
+										},
+										"userProperties": [],
+										"linkedServiceName": {
+											"referenceName": "AzureSqlDatabase",
+											"type": "LinkedServiceReference"
+										},
+										"typeProperties": {
+											"scripts": [
+												{
+													"parameters": [
+														{
+															"name": "pipeline_runtime",
+															"type": "Datetime",
+															"value": {
+																"value": "@pipeline().TriggerTime",
+																"type": "Expression"
+															},
+															"direction": "Input"
+														},
+														{
+															"name": "folder",
+															"type": "String",
+															"value": {
+																"value": "@item().source_folder",
+																"type": "Expression"
+															}
+														}
+													],
+													"type": "Query",
+													"text": "update Ecommerce.Bronze_Control_File\nset last_modified_time = @pipeline_runtime\nwhere source_folder = @folder"
+												}
+											],
+											"scriptBlockExecutionTimeout": "02:00:00"
+										}
 									}
 								],
 								"ifTrueActivities": [
