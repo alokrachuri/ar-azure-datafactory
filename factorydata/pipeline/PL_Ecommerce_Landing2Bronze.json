@@ -230,9 +230,20 @@
 										"typeProperties": {
 											"scripts": [
 												{
+													"parameters": [
+														{
+															"name": "pipeline_runtime",
+															"type": "Datetime",
+															"value": {
+																"value": "@pipeline().TriggerTime",
+																"type": "Expression"
+															},
+															"direction": "Input"
+														}
+													],
 													"type": "Query",
 													"text": {
-														"value": "@concat(\n'UPDATE Ecommerce.Bronze_Control_File\n SET last_modified_time = ''',\npipeline().TriggerTime,\n'''\n WHERE source_folder = ''Sales'''\n)",
+														"value": "UPDATE Ecommerce.Bronze_Control_File\nSET last_modified_time = @pipeline_runtime\nWHERE source_folder = 'Sales';",
 														"type": "Expression"
 													}
 												}
