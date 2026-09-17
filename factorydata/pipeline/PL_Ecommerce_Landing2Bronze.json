@@ -184,7 +184,8 @@
 															"value": {
 																"value": "@item().source_folder",
 																"type": "Expression"
-															}
+															},
+															"direction": "Input"
 														}
 													],
 													"type": "Query",
