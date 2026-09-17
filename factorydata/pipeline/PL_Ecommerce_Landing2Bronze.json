@@ -24,7 +24,8 @@
 					"dataset": {
 						"referenceName": "DS_Bronze_Control_AzureSqlTable",
 						"type": "DatasetReference"
-					}
+					},
+					"firstRowOnly": false
 				}
 			},
 			{
