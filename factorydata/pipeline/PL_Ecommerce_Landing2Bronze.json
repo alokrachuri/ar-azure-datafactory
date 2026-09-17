@@ -97,6 +97,7 @@
 														"value": "@pipeline().TriggerTime",
 														"type": "Expression"
 													},
+													"wildcardFileName": "*.csv",
 													"enablePartitionDiscovery": false
 												},
 												"formatSettings": {
