@@ -223,7 +223,7 @@
 													}
 												],
 												"sqlReaderQuery": {
-													"value": "SELECT * FROM Ecommerce.Landing_Sales \nWHERE last_modified_time > '@{item().last_modified_time}'",
+													"value": "SELECT * FROM Ecommerce.Landing_Sales \nWHERE src_loaded_timestamp > '@{item().last_modified_time}'",
 													"type": "Expression"
 												},
 												"queryTimeout": "02:00:00",
