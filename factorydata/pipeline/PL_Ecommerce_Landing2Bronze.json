@@ -72,6 +72,19 @@
 										"typeProperties": {
 											"source": {
 												"type": "DelimitedTextSource",
+												"additionalColumns": [
+													{
+														"name": "file_path",
+														"value": "$$FILEPATH"
+													},
+													{
+														"name": "adf_batch_id",
+														"value": {
+															"value": "@pipeline().RunId",
+															"type": "Expression"
+														}
+													}
+												],
 												"storeSettings": {
 													"type": "AzureBlobStorageReadSettings",
 													"recursive": true,
@@ -146,6 +159,15 @@
 										"typeProperties": {
 											"source": {
 												"type": "AzureSqlSource",
+												"additionalColumns": [
+													{
+														"name": "adf_batch_id",
+														"value": {
+															"value": "@pipeline().RunId",
+															"type": "Expression"
+														}
+													}
+												],
 												"sqlReaderQuery": {
 													"value": "SELECT * FROM Ecommerce.Landing_Sales \nWHERE last_modified_time > '@{item().last_modified_time}'",
 													"type": "Expression"
