@@ -1,0 +1,315 @@
+{
+	"name": "PL_Ecommerce",
+	"properties": {
+		"description": "Pipeline to move Ecommerce data from Landing layer to Bronze layer",
+		"activities": [
+			{
+				"name": "Lookup1",
+				"type": "Lookup",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "AzureSqlSource",
+						"queryTimeout": "02:00:00",
+						"partitionOption": "None"
+					},
+					"dataset": {
+						"referenceName": "DS_Bronze_Control_AzureSqlTable",
+						"type": "DatasetReference"
+					},
+					"firstRowOnly": false
+				}
+			},
+			{
+				"name": "ForEach1",
+				"type": "ForEach",
+				"dependsOn": [
+					{
+						"activity": "Lookup1",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"items": {
+						"value": "@activity('Lookup1').output.value",
+						"type": "Expression"
+					},
+					"batchCount": 3,
+					"activities": [
+						{
+							"name": "If Condition1",
+							"type": "IfCondition",
+							"dependsOn": [],
+							"userProperties": [],
+							"typeProperties": {
+								"expression": {
+									"value": "@equals(item().source_folder,'Sales')",
+									"type": "Expression"
+								},
+								"ifFalseActivities": [
+									{
+										"name": "Copy data2",
+										"type": "Copy",
+										"dependsOn": [],
+										"policy": {
+											"timeout": "0.12:00:00",
+											"retry": 0,
+											"retryIntervalInSeconds": 30,
+											"secureOutput": false,
+											"secureInput": false
+										},
+										"userProperties": [],
+										"typeProperties": {
+											"source": {
+												"type": "DelimitedTextSource",
+												"additionalColumns": [
+													{
+														"name": "file_path",
+														"value": "$$FILEPATH"
+													},
+													{
+														"name": "adf_batch_id",
+														"value": {
+															"value": "@pipeline().RunId",
+															"type": "Expression"
+														}
+													}
+												],
+												"storeSettings": {
+													"type": "AzureBlobStorageReadSettings",
+													"recursive": true,
+													"modifiedDatetimeStart": {
+														"value": "@item().last_modified_time",
+														"type": "Expression"
+													},
+													"modifiedDatetimeEnd": {
+														"value": "@pipeline().TriggerTime",
+														"type": "Expression"
+													},
+													"wildcardFileName": "*.csv",
+													"enablePartitionDiscovery": false
+												},
+												"formatSettings": {
+													"type": "DelimitedTextReadSettings"
+												}
+											},
+											"sink": {
+												"type": "AzureSqlSink",
+												"writeBehavior": "insert",
+												"sqlWriterUseTableLock": false
+											},
+											"enableStaging": false,
+											"translator": {
+												"type": "TabularTranslator",
+												"typeConversion": true,
+												"typeConversionSettings": {
+													"allowDataTruncation": true,
+													"treatBooleanAsNumber": false
+												}
+											}
+										},
+										"inputs": [
+											{
+												"referenceName": "DS_Blob_Storage",
+												"type": "DatasetReference",
+												"parameters": {
+													"folder": {
+														"value": "@item().source_folder",
+														"type": "Expression"
+													}
+												}
+											}
+										],
+										"outputs": [
+											{
+												"referenceName": "DS_AzureSqlTable_Bronze_CustProd",
+												"type": "DatasetReference",
+												"parameters": {
+													"table": {
+														"value": "@item().target_table",
+														"type": "Expression"
+													}
+												}
+											}
+										]
+									},
+									{
+										"name": "Script2",
+										"type": "Script",
+										"dependsOn": [
+											{
+												"activity": "Copy data2",
+												"dependencyConditions": [
+													"Succeeded"
+												]
+											}
+										],
+										"policy": {
+											"timeout": "0.12:00:00",
+											"retry": 0,
+											"retryIntervalInSeconds": 30,
+											"secureOutput": false,
+											"secureInput": false
+										},
+										"userProperties": [],
+										"linkedServiceName": {
+											"referenceName": "AzureSqlDatabase",
+											"type": "LinkedServiceReference"
+										},
+										"typeProperties": {
+											"scripts": [
+												{
+													"parameters": [
+														{
+															"name": "pipeline_runtime",
+															"type": "Datetime",
+															"value": {
+																"value": "@pipeline().TriggerTime",
+																"type": "Expression"
+															},
+															"direction": "Input"
+														},
+														{
+															"name": "folder",
+															"type": "String",
+															"value": {
+																"value": "@item().source_folder",
+																"type": "Expression"
+															},
+															"direction": "Input"
+														}
+													],
+													"type": "Query",
+													"text": "update Ecommerce.Bronze_Control_File\nset last_modified_time = @pipeline_runtime\nwhere source_folder = @folder"
+												}
+											],
+											"scriptBlockExecutionTimeout": "02:00:00"
+										}
+									}
+								],
+								"ifTrueActivities": [
+									{
+										"name": "Copy data1",
+										"type": "Copy",
+										"dependsOn": [],
+										"policy": {
+											"timeout": "0.12:00:00",
+											"retry": 0,
+											"retryIntervalInSeconds": 30,
+											"secureOutput": false,
+											"secureInput": false
+										},
+										"userProperties": [],
+										"typeProperties": {
+											"source": {
+												"type": "AzureSqlSource",
+												"additionalColumns": [
+													{
+														"name": "adf_batch_id",
+														"value": {
+															"value": "@pipeline().RunId",
+															"type": "Expression"
+														}
+													}
+												],
+												"sqlReaderQuery": {
+													"value": "SELECT * FROM Ecommerce.Landing_Sales \nWHERE src_loaded_timestamp > '@{item().last_modified_time}'",
+													"type": "Expression"
+												},
+												"queryTimeout": "02:00:00",
+												"partitionOption": "None"
+											},
+											"sink": {
+												"type": "AzureSqlSink",
+												"writeBehavior": "insert",
+												"sqlWriterUseTableLock": false
+											},
+											"enableStaging": false,
+											"translator": {
+												"type": "TabularTranslator",
+												"typeConversion": true,
+												"typeConversionSettings": {
+													"allowDataTruncation": true,
+													"treatBooleanAsNumber": false
+												}
+											}
+										},
+										"inputs": [
+											{
+												"referenceName": "DS_AzureSqlTable_Landing_Sales",
+												"type": "DatasetReference"
+											}
+										],
+										"outputs": [
+											{
+												"referenceName": "DS_AzureSqlTable_Bronze_Sales",
+												"type": "DatasetReference"
+											}
+										]
+									},
+									{
+										"name": "Script1",
+										"description": "",
+										"type": "Script",
+										"dependsOn": [
+											{
+												"activity": "Copy data1",
+												"dependencyConditions": [
+													"Succeeded"
+												]
+											}
+										],
+										"policy": {
+											"timeout": "0.12:00:00",
+											"retry": 0,
+											"retryIntervalInSeconds": 30,
+											"secureOutput": false,
+											"secureInput": false
+										},
+										"userProperties": [],
+										"linkedServiceName": {
+											"referenceName": "AzureSqlDatabase",
+											"type": "LinkedServiceReference"
+										},
+										"typeProperties": {
+											"scripts": [
+												{
+													"parameters": [
+														{
+															"name": "pipeline_runtime",
+															"type": "Datetime",
+															"value": {
+																"value": "@pipeline().TriggerTime",
+																"type": "Expression"
+															},
+															"direction": "Input"
+														}
+													],
+													"type": "Query",
+													"text": "UPDATE Ecommerce.Bronze_Control_File\nSET last_modified_time = @pipeline_runtime\nWHERE source_folder = 'Sales';"
+												}
+											],
+											"scriptBlockExecutionTimeout": "02:00:00"
+										}
+									}
+								]
+							}
+						}
+					]
+				}
+			}
+		],
+		"annotations": []
+	}
+}
