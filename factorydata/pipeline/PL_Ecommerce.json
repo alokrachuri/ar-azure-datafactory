@@ -400,6 +400,9 @@
 					"secureInput": false
 				},
 				"userProperties": [],
+				"typeProperties": {
+					"notebookPath": "/Workspace/Users/rajeshwari.agganoor@gmail.com/PL_Gold_Layer 2026-09-23 17:50:01"
+				},
 				"linkedServiceName": {
 					"referenceName": "AzureDatabricks1",
 					"type": "LinkedServiceReference"
