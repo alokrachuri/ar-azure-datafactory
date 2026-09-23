@@ -310,9 +310,22 @@
 				}
 			},
 			{
-				"name": "Job1",
+				"name": "Job_gold_loayer",
 				"type": "DatabricksJob",
-				"dependsOn": [],
+				"dependsOn": [
+					{
+						"activity": "Job1",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					},
+					{
+						"activity": "Job2",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
 				"policy": {
 					"timeout": "0.12:00:00",
 					"retry": 0,
@@ -321,6 +334,84 @@
 					"secureInput": false
 				},
 				"userProperties": [],
+				"typeProperties": {
+					"jobId": {
+						"value": "675718244990347",
+						"type": "Expression"
+					}
+				},
+				"linkedServiceName": {
+					"referenceName": "AzureDatabricks1",
+					"type": "LinkedServiceReference"
+				}
+			},
+			{
+				"name": "Job1",
+				"type": "DatabricksJob",
+				"dependsOn": [
+					{
+						"activity": "ForEach1",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 2,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"jobId": {
+						"value": "1094535680305481",
+						"type": "Expression"
+					},
+					"jobParameters": {
+						"adf_batch_id": {
+							"value": "@pipeline().RunId",
+							"type": "Expression"
+						}
+					}
+				},
+				"linkedServiceName": {
+					"referenceName": "AzureDatabricks1",
+					"type": "LinkedServiceReference"
+				}
+			},
+			{
+				"name": "Job2",
+				"type": "DatabricksJob",
+				"dependsOn": [
+					{
+						"activity": "ForEach1",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 2,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"jobId": {
+						"value": "68753114437213",
+						"type": "Expression"
+					},
+					"jobParameters": {
+						"adf_batch_id": {
+							"value": "@pipeline().RunId",
+							"type": "Expression"
+						}
+					}
+				},
 				"linkedServiceName": {
 					"referenceName": "AzureDatabricks1",
 					"type": "LinkedServiceReference"
