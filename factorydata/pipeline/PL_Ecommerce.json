@@ -310,16 +310,9 @@
 				}
 			},
 			{
-				"name": "Notebook MasterData",
-				"type": "DatabricksNotebook",
-				"dependsOn": [
-					{
-						"activity": "ForEach1",
-						"dependencyConditions": [
-							"Succeeded"
-						]
-					}
-				],
+				"name": "Silver Layer Master Data",
+				"type": "DatabricksJob",
+				"dependsOn": [],
 				"policy": {
 					"timeout": "0.12:00:00",
 					"retry": 2,
@@ -329,79 +322,12 @@
 				},
 				"userProperties": [],
 				"typeProperties": {
-					"notebookPath": "/Workspace/Users/rajeshwari.agganoor@gmail.com/PL_Customers&Products 2026-09-18 15:02:54",
-					"baseParameters": {
+					"jobParameters": {
 						"adf_batch_id": {
 							"value": "@pipeline().RunId",
 							"type": "Expression"
 						}
 					}
-				},
-				"linkedServiceName": {
-					"referenceName": "AzureDatabricks1",
-					"type": "LinkedServiceReference"
-				}
-			},
-			{
-				"name": "Notebook Sales",
-				"type": "DatabricksNotebook",
-				"dependsOn": [
-					{
-						"activity": "ForEach1",
-						"dependencyConditions": [
-							"Succeeded"
-						]
-					}
-				],
-				"policy": {
-					"timeout": "0.12:00:00",
-					"retry": 0,
-					"retryIntervalInSeconds": 30,
-					"secureOutput": false,
-					"secureInput": false
-				},
-				"userProperties": [],
-				"typeProperties": {
-					"notebookPath": "/Workspace/Users/rajeshwari.agganoor@gmail.com/PL_Orders 2026-09-23 17:26:06",
-					"baseParameters": {
-						"adf_batch_id": {
-							"value": "@pipeline().RunId",
-							"type": "Expression"
-						}
-					}
-				},
-				"linkedServiceName": {
-					"referenceName": "AzureDatabricks1",
-					"type": "LinkedServiceReference"
-				}
-			},
-			{
-				"name": "Notebook Gold Layer",
-				"type": "DatabricksNotebook",
-				"dependsOn": [
-					{
-						"activity": "Notebook MasterData",
-						"dependencyConditions": [
-							"Succeeded"
-						]
-					},
-					{
-						"activity": "Notebook Sales",
-						"dependencyConditions": [
-							"Succeeded"
-						]
-					}
-				],
-				"policy": {
-					"timeout": "0.12:00:00",
-					"retry": 0,
-					"retryIntervalInSeconds": 30,
-					"secureOutput": false,
-					"secureInput": false
-				},
-				"userProperties": [],
-				"typeProperties": {
-					"notebookPath": "/Workspace/Users/rajeshwari.agganoor@gmail.com/PL_Gold_Layer 2026-09-23 17:50:01"
 				},
 				"linkedServiceName": {
 					"referenceName": "AzureDatabricks1",
